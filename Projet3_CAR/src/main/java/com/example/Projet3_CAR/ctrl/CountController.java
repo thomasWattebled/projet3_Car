@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +30,8 @@ public class CountController {
 	@PostMapping("/addFile")
 	public String addFile(@RequestParam String file) throws IOException {
 		System.out.println(file); 
-		File myfile = new File("/Documents/projet3_Car/Projet3_CAR/file/"+file);
+		//Paths p = Paths.get(/chemin/vers/monFichier.txt);
+		File myfile = new File("./file/"+file);
 		System.out.println(myfile.getAbsoluteFile());
 		//System.out.println(myfile.exists());
 		try {
