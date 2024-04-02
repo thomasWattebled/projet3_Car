@@ -39,14 +39,37 @@ public class CountController {
 	      BufferedReader br = new BufferedReader(fr);  
 	      StringBuffer sb = new StringBuffer();    
 	      String line;
-	      while((line = br.readLine()) != null)
-	      {
+	      
+	      while((line = br.readLine()) != null){
 	        // ajoute la ligne au buffer
+	      	line = br.readLine();
+	    	System.out.println(line);
+	    	String[] list = line.split(" ");
+	    	System.out.println(list.length);
+	    	ArrayList<String> list1 = new ArrayList<String>();
+	    	ArrayList<String> list2 = new ArrayList<String>();
+	    	for (int i=0; i<list.length; i++) {
+	    		String mot = list[i];
+	    		//System.out.println(mot);
+	    		//System.out.println(mot.compareTo("m"));
+	    		if(mot.compareTo("m")<0) {
+	    			list1.add(mot);
+	    		}
+	    		else {
+	    			list2.add(mot);
+	    		}
+	    	}
+	    	for (String i : list1 ) {
+	    		System.out.println(i);
+	    	}
+	    	
 	        sb.append(line);      
 	        sb.append("\n");     
 	      }
-	      fr.close();      System.out.println("Contenu du fichier: ");
-	      System.out.println(sb.toString()); }
+	      fr.close();     
+	      System.out.println("Contenu du fichier: ");
+	      System.out.println(sb.toString()); 
+	    	}
 		catch (FileNotFoundException e ) {
 			System.out.println(e.getMessage());
 		}
