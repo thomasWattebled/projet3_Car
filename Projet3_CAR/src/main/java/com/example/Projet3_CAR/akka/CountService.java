@@ -7,4 +7,6 @@ public interface CountService {
 	
 	public void readfile(File file) throws IOException;
 
+	public void init();
+
 }

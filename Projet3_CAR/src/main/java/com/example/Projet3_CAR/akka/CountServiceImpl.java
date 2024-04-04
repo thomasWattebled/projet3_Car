@@ -20,14 +20,6 @@ public class CountServiceImpl implements CountService {
 	private ActorRef mapper2;
 	private ActorRef mapper3;
 	
-	public CountServiceImpl() {
-		system = ActorSystem.create("MyStestem");
-		mapper1 = system.actorOf(Props.create(Mapper.class), "mapper1");
-		mapper2 = system.actorOf(Props.create(Mapper.class), "mapper2");
-		mapper3 = system.actorOf(Props.create(Mapper.class), "mapper3");
-		
-	}
-	
 	public void readfile(File file) throws IOException {
 		try {
 		      FileReader fr = new FileReader(file);  
@@ -81,6 +73,15 @@ public class CountServiceImpl implements CountService {
 			catch (FileNotFoundException e ) {
 				System.out.println(e.getMessage());
 	}
+		
+	}
+
+	@Override
+	public void init() {
+		system = ActorSystem.create("MyStestem");
+		mapper1 = system.actorOf(Props.create(Mapper.class), "mapper1");
+		mapper2 = system.actorOf(Props.create(Mapper.class), "mapper2");
+		mapper3 = system.actorOf(Props.create(Mapper.class), "mapper3");
 		
 	}
 

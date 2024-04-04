@@ -32,7 +32,7 @@ import akka.actor.Props;
 public class CountController {
 	
 	@Autowired
-	private CountService countservice;
+	private CountService countservice; 
 	
 	
 	@GetMapping("/count")
@@ -48,6 +48,12 @@ public class CountController {
 		countservice.readfile(myfile);
 	        
 	  
+		return "redirect:/akka/count"; 
+	}
+	
+	@PostMapping("/init")
+	public String init()  {
+		countservice.init();
 		return "redirect:/akka/count"; 
 	}
 	
