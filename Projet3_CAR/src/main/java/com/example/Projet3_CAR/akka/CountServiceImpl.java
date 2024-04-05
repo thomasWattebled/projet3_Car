@@ -6,12 +6,17 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.springframework.stereotype.Service;
 
+
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
+import akka.actor.Inbox;
 import akka.actor.Props;
+import scala.concurrent.duration.FiniteDuration;
 
 @Service
 public class CountServiceImpl implements CountService {
@@ -19,6 +24,8 @@ public class CountServiceImpl implements CountService {
 	private ActorRef mapper1;
 	private ActorRef mapper2;
 	private ActorRef mapper3;
+	private ActorRef reducer2;
+	private ActorRef reducer1;
 	
 	public void readfile(File file) throws IOException {
 		try {
@@ -43,46 +50,57 @@ public class CountServiceImpl implements CountService {
 		      	if (compteur ==3) {
 		      		mapper3.tell( new GreetingMessage(line), ActorRef.noSender());
 		      		compteur =0 ;
-		      	}
-		    	//String[] list = line.split(" ");
-		    	//System.out.println(list.length);
-		    	//ArrayList<String> list1 = new ArrayList<String>();
-		    	//ArrayList<String> list2 = new ArrayList<String>();
-		    	//for (int i=0; i<list.length; i++) {
-		  		//String mot = list[i];
-		    		//System.out.println(mot);
-		    		//System.out.println(mot.compareTo("m"));
-		    		//if(mot.compareTo("m")<0) {
-		    		//	list1.add(mot);
-		    		//}
-		    		//else {
-		    		//	list2.add(mot);
-		    		//}
-		    	//}
-		    	//for (String i : list1 ) {
-		    	//	//System.out.println(i);
-		    	//}
-		    	
-		        //sb.append(line);      
-		       // sb.append("\n");     
+		      	}   
 		      }
-		      fr.close();     
-		     System.out.println("Contenu du fichier: ");
-		     System.out.println(sb.toString()); 
+		     fr.close();     
+		     //System.out.println("Contenu du fichier: ");
+		     //System.out.println(sb.toString()); 
 		    	}
 			catch (FileNotFoundException e ) {
 				System.out.println(e.getMessage());
 	}
 		
 	}
+	
+	
 
 	@Override
 	public void init() {
 		system = ActorSystem.create("MyStestem");
-		mapper1 = system.actorOf(Props.create(Mapper.class), "mapper1");
-		mapper2 = system.actorOf(Props.create(Mapper.class), "mapper2");
-		mapper3 = system.actorOf(Props.create(Mapper.class), "mapper3");
-		
+		reducer1 = system.actorOf(Props.create(Reducer.class), "reducer1");
+		reducer2 = system.actorOf(Props.create(Reducer.class), "reducer2");
+		ArrayList<ActorRef> reducers = new ArrayList<ActorRef>();
+		reducers.add(reducer1);
+		reducers.add(reducer2);
+		mapper1 = system.actorOf(Props.create(Mapper.class,reducers), "mapper1");
+		mapper2 = system.actorOf(Props.create(Mapper.class,reducers), "mapper2");
+		mapper3 = system.actorOf(Props.create(Mapper.class,reducers), "mapper3");
+		ArrayList<ActorRef> mappers = new ArrayList<ActorRef>();
+	}
+
+
+
+	@Override
+	public String findMot(String mot) {
+		Inbox inbox = Inbox.create(system);
+		if(mot.compareTo("m")<0) {
+			inbox.send(reducer1, new RequestMessage(mot));
+		}
+		else {
+			inbox.send(reducer2, new RequestMessage(mot));
+		}
+		Object reply = null;
+		try {
+			 reply = inbox.receive(FiniteDuration.create(5, TimeUnit.SECONDS));
+		}
+		catch(TimeoutException e) {
+			
+		}
+		if(reply instanceof GreetingMessage rm) {
+			System.out.println("Response reçu : "+ rm.line());
+			return rm.line();
+		}
+		return null;
 	}
 
 }

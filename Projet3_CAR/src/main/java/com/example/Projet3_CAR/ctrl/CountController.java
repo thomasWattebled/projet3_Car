@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +35,16 @@ public class CountController {
 	@Autowired
 	private CountService countservice; 
 	
+	private String occurence;
+	private String motToFind;
+	
 	
 	@GetMapping("/count")
 	public String home(Model model) {
+		if (occurence != null) {
+			model.addAttribute("occurence",occurence);
+			model.addAttribute("motToFind",motToFind);
+		}
 		return "count";
 	}
 	
@@ -48,6 +56,16 @@ public class CountController {
 		countservice.readfile(myfile);
 	        
 	  
+		return "redirect:/akka/count"; 
+	}
+	
+	@PostMapping("/findMot")
+	public String findMot(@RequestParam String mot){
+		HashMap<String,String> occmot= new HashMap<String,String>();
+		System.out.println(mot);
+		occurence = countservice.findMot(mot);
+		motToFind=mot;
+		occmot.put(mot, occurence);
 		return "redirect:/akka/count"; 
 	}
 	

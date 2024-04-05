@@ -9,4 +9,6 @@ public interface CountService {
 
 	public void init();
 
+	public String findMot(String mot);
+
 }

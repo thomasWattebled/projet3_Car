@@ -22,6 +22,18 @@
 <input type="submit" th:value="submit">
 </form>
 
+<h1> Trouver le mot </h1>
+
+<form action="/akka/findMot" method="post">
+<p> Trouvez l'occurence d'un mot :<input type="text" name="mot">
+<input type="submit" value="submit">
+</form>
+
+<div >
+	
+	<p th:text="'le mot ' +${motToFind} +' apparait ' + ${occurence} + ' fois'"/>
+</div>
+
 
 </body>
 
