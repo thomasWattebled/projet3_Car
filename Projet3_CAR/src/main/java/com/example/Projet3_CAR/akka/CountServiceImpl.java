@@ -72,10 +72,16 @@ public class CountServiceImpl implements CountService {
 		ArrayList<ActorRef> reducers = new ArrayList<ActorRef>();
 		reducers.add(reducer1);
 		reducers.add(reducer2);
-		mapper1 = system.actorOf(Props.create(Mapper.class,reducers), "mapper1");
-		mapper2 = system.actorOf(Props.create(Mapper.class,reducers), "mapper2");
-		mapper3 = system.actorOf(Props.create(Mapper.class,reducers), "mapper3");
+		mapper1 = system.actorOf(Props.create(Mapper.class), "mapper1");
+		mapper2 = system.actorOf(Props.create(Mapper.class), "mapper2");
+		mapper3 = system.actorOf(Props.create(Mapper.class), "mapper3");
 		ArrayList<ActorRef> mappers = new ArrayList<ActorRef>();
+		mappers.add(mapper1); mappers.add(mapper2); mappers.add(mapper3);
+		for(ActorRef m: mappers) {
+			m.tell(reducer1, ActorRef.noSender());
+			m.tell(reducer2, ActorRef.noSender());
+		}
+		
 	}
 
 
@@ -83,7 +89,7 @@ public class CountServiceImpl implements CountService {
 	@Override
 	public String findMot(String mot) {
 		Inbox inbox = Inbox.create(system);
-		if(mot.compareTo("m")<0) {
+		if(mot.length()<5) {
 			inbox.send(reducer1, new RequestMessage(mot));
 		}
 		else {

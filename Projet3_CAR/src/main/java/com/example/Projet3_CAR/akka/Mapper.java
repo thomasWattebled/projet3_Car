@@ -3,18 +3,19 @@ package com.example.Projet3_CAR.akka;
 import java.util.ArrayList;
 
 import akka.actor.ActorRef;
+import akka.actor.RepointableActorRef;
 import akka.actor.UntypedActor;
 
 public class Mapper extends UntypedActor  {
 	
-	private ArrayList<ActorRef> reducers = new ArrayList<ActorRef>(); 
+	private ArrayList<ActorRef> reducers ; 
 	
-	public Mapper(ArrayList<ActorRef> reducers) {
-		this.reducers=reducers;
+	public Mapper() {
+		this.reducers= new ArrayList<ActorRef>();
 	}
 
 	public void onReceive(Object message) {
-		System.out.println(reducers.size());
+		//System.out.println(reducers.size());
 		if(message instanceof GreetingMessage m) {
 			System.out.println("Message de "+ m.line())	;	
 			String[] list = m.line().split(" ");
@@ -25,7 +26,7 @@ public class Mapper extends UntypedActor  {
 	    		String mot = list[i];
 	    		//System.out.println(mot);
 	    		//System.out.println(mot.compareTo("m"));
-	    		if(mot.compareTo("m")<0) {
+	    		if(mot.length()<5) {
 	    			this.reducers.get(0).tell( new GreetingMessage(mot), ActorRef.noSender());
 	    			//list1.add(mot);
 	    		}
@@ -35,6 +36,11 @@ public class Mapper extends UntypedActor  {
 	    		}
 	    		//System.out.println(list1);
 	    	}
+	  
+	    }
+		  if(message instanceof ActorRef r) {
+		    	System.out.println("ajout reducer");
+		    	this.reducers.add((ActorRef) r);
 		}
 	    	
 			
