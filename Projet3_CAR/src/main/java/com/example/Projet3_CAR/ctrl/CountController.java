@@ -50,11 +50,12 @@ public class CountController {
 	
 	@PostMapping("/addFile")
 	public String addFile(@RequestParam String file) throws IOException {
+		this.init();
 		System.out.println(file); 
 		File myfile = new File("./file/"+file);
 		System.out.println(myfile.getAbsoluteFile());
 		countservice.readfile(myfile);
-	        
+	    
 	  
 		return "redirect:/akka/count"; 
 	}
